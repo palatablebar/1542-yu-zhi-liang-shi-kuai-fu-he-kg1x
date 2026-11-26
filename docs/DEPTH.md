@@ -16,6 +16,7 @@ AI/ML · 传统ML · 中型
 | M6 | 配比变化 | 差异定位和外推审查 | `src/beamcure/recipe_shift/service.py` | `tests/test_recipe_shift.py` |
 | M7 | 压机复检 | 硬规则与额度分配 | `src/beamcure/retest_press/service.py` | `tests/test_retest_press.py` |
 | M8 | 拆模凭证 | 单据及额度证据 | `src/beamcure/casting_release/service.py` | `tests/test_casting_release.py` |
+| M9 | 补测续派 | 撤回补位与冻结版本复用 | `src/beamcure/retest_reissue/service.py` | `tests/test_retest_reissue.py`、`tests/test_retest_reissue_pipeline.py` |
 
 ## 深度登记
 
@@ -30,3 +31,7 @@ AI/ML · 传统ML · 中型
 | TRAP-44 | 校准样本不足 | 分派前转人工判读并保留原因 | `src/beamcure/cube_validation/service.py` | `tests/test_cube_validation.py::test_empty_calibration_requires_review` |
 | TRAP-53 | 单条推断与混批 | 复用冻结参数，各条估计完全一致 | `src/beamcure/strength_classifier/service.py` | `tests/test_strength_classifier.py::test_input_batch_invariance` |
 | TRAP-54 | 特征版本与模型不配对 | 拒绝继续推断并要求重拟合 | `src/beamcure/strength_classifier/service.py` | `tests/test_strength_classifier.py::test_mismatched_model_input_version_fails` |
+| TRAP-61 | 补测后仍合格且用量未变 | 已签发单照常上机，只刷新风险，不腾位不重扣 | `src/beamcure/retest_reissue/service.py` | `tests/test_retest_reissue.py::test_unchanged_eligibility_and_load_keeps_issued_ticket_on_press` |
+| TRAP-62 | 同批补测重试 | 以 `event_id` 幂等回放，重试不重复扣工位 | `src/beamcure/retest_reissue/service.py` | `tests/test_retest_reissue.py::test_retrying_same_event_is_idempotent_and_does_not_recharge` |
+| TRAP-63 | 撤回空位补派 | 仅在撤回释放工位时按新风险补位，闲置额度不主动占用 | `src/beamcure/retest_reissue/service.py` | `tests/test_retest_reissue.py::test_freed_slot_is_refilled_by_new_risk_order` |
+| TRAP-64 | 续派冻结版本 | 原凭证与续派凭证携带同一特征标准、模型、校准 | `src/beamcure/retest_reissue/contracts.py` | `tests/test_retest_reissue.py::test_reissue_keeps_frozen_reference_through_every_voucher` |
